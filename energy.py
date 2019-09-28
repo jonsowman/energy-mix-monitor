@@ -24,6 +24,12 @@ class EnergyMix(object):
     def __init__(self):
         self.sources = []
 
+    def percent(self, fuel):
+        try:
+            return [s.percent for s in self.sources if s.fuel == fuel][0]
+        except IndexError:
+            return 0
+
     def from_json(self, json):
         for source in json['data']['generationmix']:
             self.sources.append(EnergySource(fuel=source['fuel'],
@@ -50,11 +56,11 @@ def mix():
     r = requests.get('https://api.carbonintensity.org.uk/generation')
     mix = EnergyMix()
     mix.from_json(json.loads(r.text))
-    print(mix)
+    return mix
 
 def intensity():
     r = requests.get('https://api.carbonintensity.org.uk/intensity')
     ci = EnergyIntensity()
     ci.from_json(json.loads(r.text))
-    print(ci)
+    return ci
 
